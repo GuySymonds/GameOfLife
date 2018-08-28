@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace GameOfLife
 {
@@ -6,7 +7,16 @@ namespace GameOfLife
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var seconds = 20;
+            Console.WriteLine("Game Of Life!");
+            var life = new Life(Console.WindowWidth, Console.WindowHeight);
+            life.Print();
+
+            while (true)
+            {
+                life.Tick();
+                Thread.Sleep(500);
+            }
         }
     }
 }
