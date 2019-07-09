@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GameOfLife
+﻿namespace GameOfLife
 {
+
     public static partial class Extention
     {
         public static bool Law(this bool[,] present, int row, int column)
@@ -11,7 +8,7 @@ namespace GameOfLife
             var cell = present[row, column];
             var maxRow = present.GetLength(0) - 1;
             var maxColumn = present.GetLength(1) - 1;
-            
+
             var northRow = row - 1 == -1 ? maxRow : row - 1;
             var southRow = row + 1 > maxRow ? 0 : row + 1;
             var eastColumn = column + 1 > maxColumn ? 0 : column + 1;
@@ -36,7 +33,7 @@ namespace GameOfLife
                 //Any live cell with more than three live neighbors dies, as if by overpopulation
                 cell = false;
             }
-            else if(!cell && neighbors == 3)
+            else if (!cell && neighbors == 3)
             {
                 cell = true;
             }
