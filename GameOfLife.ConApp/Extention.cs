@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GameOfLife.ConApp
@@ -22,6 +23,13 @@ namespace GameOfLife.ConApp
             }
             Console.Clear();
             Console.Write(sb);
+        }
+
+        public static bool IsEqual(this byte[,] current, byte[,] compare)
+        {
+            return current?.Rank == compare?.Rank &&
+                Enumerable.Range(0, current.Rank).All(dimension => current.GetLength(dimension) == compare.GetLength(dimension)) &&
+                current.Cast<byte>().SequenceEqual(compare.Cast<byte>());
         }
     }
 }
