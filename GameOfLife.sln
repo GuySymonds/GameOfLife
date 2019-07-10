@@ -5,9 +5,11 @@ VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOfLife.ConApp", "GameOfLife.ConApp\GameOfLife.ConApp.csproj", "{15F7A096-782F-45CB-8EA1-5EE0AA1672A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOfLife.Engine", "GameOfLife.Engine\GameOfLife.Engine.csproj", "{210B4B49-76E6-4336-AA6A-3962FF8B6FFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOfLife.WebApi", "GameOfLife.WebApi\GameOfLife.WebApi.csproj", "{210B4B49-76E6-4336-AA6A-3962FF8B6FFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife.Common", "GameOfLife.Common\GameOfLife.Common.csproj", "{15C2FF6E-DFB7-417D-B1C8-41C2CC967DA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOfLife.Common", "GameOfLife.Common\GameOfLife.Common.csproj", "{15C2FF6E-DFB7-417D-B1C8-41C2CC967DA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife.Engine", "GameOfLife.Engine\GameOfLife.Engine.csproj", "{EA058356-ADC8-46C1-A962-9E359738425C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{15C2FF6E-DFB7-417D-B1C8-41C2CC967DA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15C2FF6E-DFB7-417D-B1C8-41C2CC967DA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15C2FF6E-DFB7-417D-B1C8-41C2CC967DA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA058356-ADC8-46C1-A962-9E359738425C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA058356-ADC8-46C1-A962-9E359738425C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA058356-ADC8-46C1-A962-9E359738425C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA058356-ADC8-46C1-A962-9E359738425C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

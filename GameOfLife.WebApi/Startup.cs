@@ -28,6 +28,7 @@ namespace GameOfLife.Engine
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddTransient<IGameService, GameService>();
+            services.AddTransient<GameEngine, GameEngine>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
