@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GameOfLife.Engine.Models;
+using GameOfLife.Common.Models;
 using GameOfLife.Engine.Services;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameOfLife.Engine.Models;
+using GameOfLife.Common.Models;
 
 namespace GameOfLife.Engine.Services
 {

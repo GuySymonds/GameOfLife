@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace GameOfLife.Engine.Models
+namespace GameOfLife.Common.Models
 {
     public class GameModel
     {

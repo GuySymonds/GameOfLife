@@ -1,4 +1,4 @@
-﻿using GameOfLife.Engine.Models;
+﻿using GameOfLife.Common.Models;
 using System;
 using System.Collections.Generic;
 
