@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Engine.Models;
-using GameOfLife;
+using GameOfLife.Engine.Models;
 
-namespace Engine.Services
+namespace GameOfLife.Engine.Services
 {
     /// <summary>
     /// ------- The Rules ------- 
@@ -19,7 +18,14 @@ namespace Engine.Services
     public class GameService : IGameService
     {
         private static readonly Lazy<IDictionary<Guid, GameModel>> _dataStore = 
-            new Lazy<IDictionary<Guid, GameModel>>(()=> new Dictionary<Guid, GameModel>());
+            new Lazy<IDictionary<Guid, GameModel>>(()=> 
+            {
+                var store = new Dictionary<Guid, GameModel>
+                {
+                    { Guid.Parse("e6829659-e497-461d-8313-2993b9a3d9e8"), new GameModel { GameId = Guid.Parse("e6829659-e497-461d-8313-2993b9a3d9e8"), Cells = GenerateSeed(100, 200) } }
+                };
+                return store;
+            });
 
         private static readonly Lazy<Random> _rand = new Lazy<Random>(()=>new Random());
 
@@ -55,26 +61,26 @@ namespace Engine.Services
             throw new KeyNotFoundException($"Key {id} does not exist");
         }
 
-        private bool[,] GenerateSeed(int rows, int columns)
+        private static byte[,] GenerateSeed(int rows, int columns)
         {
-            bool[,] seed = new bool[rows, columns];
+            var seed = new byte[rows, columns];
             for (int column = 0; column < columns; column++)
             {
                 for (int row = 0; row < rows; row++)
                 {
-                    seed[row, column] = _rand.Value.NextDouble() < 0.2 ? true : false;
+                    seed[row, column] = _rand.Value.NextDouble() < 0.2 ? (byte)1 : (byte)0;
                 }
             }
 
             return seed;
         }
 
-        public bool[,] Tick(bool[,] game)
+        public static byte[,] Tick(byte[,] game)
         {
             var rows = game.GetLength(0);
             var columns = game.GetLength(1);
 
-            var future = new bool[rows, columns];
+            var future = new byte[rows, columns];
 
             for (int column = 0; column < columns; column++)
             {

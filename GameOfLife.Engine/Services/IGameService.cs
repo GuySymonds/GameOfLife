@@ -1,8 +1,8 @@
-﻿using Engine.Models;
+﻿using GameOfLife.Engine.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Engine.Services
+namespace GameOfLife.Engine.Services
 {
     /// <summary>
     /// ------- The Rules ------- 

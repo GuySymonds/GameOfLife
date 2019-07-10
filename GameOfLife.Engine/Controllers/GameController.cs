@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Engine.Models;
-using Engine.Services;
+using GameOfLife.Engine.Models;
+using GameOfLife.Engine.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Engine.Controllers
+namespace GameOfLife.Engine.Controllers
 {
     [Route("api/[controller]s")]
     [ApiController]

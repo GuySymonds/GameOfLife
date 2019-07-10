@@ -1,4 +1,4 @@
-﻿namespace Engine.Models
+﻿namespace GameOfLife.Engine.Models
 {
     public class NewGameModel
     {

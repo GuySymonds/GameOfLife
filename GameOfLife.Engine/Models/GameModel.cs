@@ -1,20 +1,20 @@
 ﻿using System;
 
-namespace Engine.Models
+namespace GameOfLife.Engine.Models
 {
     public class GameModel
     {
         public GameModel() { }
 
-        public GameModel(bool[,] data) : this(Guid.NewGuid(), data) { }
+        public GameModel(byte[,] data) : this(Guid.NewGuid(), data) { }
 
-        public GameModel(Guid id, bool[,] data)
+        public GameModel(Guid id, byte[,] data)
         {
             GameId = id;
             Cells = data;
         }
 
         public Guid GameId { get; set; }
-        public bool[,] Cells { get; set; }
+        public byte[,] Cells { get; set; }
     }
 }
