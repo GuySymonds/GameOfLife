@@ -18,18 +18,15 @@ class Square extends React.Component {
     }
 }
 
-class ToggleButton extends React.Component {
-    render() {
-        return <button onClick=''>Pause</button>
-    };
-}
-
 class Board extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             squares: null,
-            id: 'e6829659-e497-461d-8313-2993b9a3d9e8'
+            id: 'e6829659-e497-461d-8313-2993b9a3d9e8',
+            width: 40,
+            height: 18,
+            process: false,
         };
     }
 
@@ -74,8 +71,8 @@ class Board extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                width: 40,
-                height: 18,
+                width: this.state.width,
+                height: this.state.height,
             })
         }).then((response) => response.json().then(data => {
             this.setState({ squares: data.cells });
@@ -92,14 +89,13 @@ class Board extends React.Component {
     render() {
         return (
             <div>
-                {this.renderGrid(18, 40)}
+                {this.renderGrid(this.state.height, this.state.width)}
             </div>
         );
     }
 }
 
 class Game extends React.Component {
-
     render() {
         return (
             <div className="game">
@@ -107,7 +103,7 @@ class Game extends React.Component {
                     <Board />
                 </div>
                 <div className="game-info">
-                    <ToggleButton onClick={() => { this.handleClick() }} />
+                   
                 </div>
             </div>
         );
