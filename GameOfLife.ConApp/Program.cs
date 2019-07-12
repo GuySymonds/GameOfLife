@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 
 namespace GameOfLife.ConApp
@@ -14,18 +15,20 @@ namespace GameOfLife.ConApp
             _width = 200;
             _height = 40;
             Thread.Sleep(1000);
-            var sleeper = 0;
+            var sleeper = 100;
             Console.WriteLine("Game Of Life!");
             var changing = true;
             var game = new Game();
             var current = game.GetNewGame(new Common.Models.NewGameModel(_width, _height));
-            current.Cells.Print();
+            
+            Console.Write(current.Cells.ToString('#'));
             int cycles = 0;
             byte[,] last = null;
             byte[,] secondLast = null;
 
             while (changing)
             {
+                Console.Clear();
                 cycles++;
                 current = game.GetNextGameState(current.GameId);
                 if(current.Cells.IsEqual(last))
@@ -40,12 +43,17 @@ namespace GameOfLife.ConApp
                 }
                 else
                 {
-                    current.Cells.Print();
+                    if(cycles % 2 == 0)
+                        Console.Write(current.Cells.ToString('#'));
+                    else
+                        Console.Write(current.Cells.ToString('='));
+
                     Thread.Sleep(sleeper);
                     Console.WriteLine("Total Cycles: {0}", cycles);
                     secondLast = last;
                     last = current.Cells;
                 }
+                    Console.WriteLine("Galactic Life: {0}", current.Cells.TotalLife());
 
                 /*if (cycles % 9 == 0)
                 {

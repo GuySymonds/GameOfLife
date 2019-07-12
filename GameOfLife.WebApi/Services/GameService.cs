@@ -28,7 +28,7 @@ namespace GameOfLife.Engine.Services
                     new GameModel
                     {
                         GameId = Guid.Parse("e6829659-e497-461d-8313-2993b9a3d9e8"),
-                        Cells = _gameEngine.GenerateSeed(100, 100)
+                        Cells = _gameEngine.GenerateSeed(18, 40)
                     });
         }
 
