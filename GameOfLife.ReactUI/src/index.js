@@ -24,14 +24,13 @@ class Board extends React.Component {
         this.state = {
             squares: null,
             id: 'e6829659-e497-461d-8313-2993b9a3d9e8',
-            width: 40,
-            height: 18,
+            width: 160,
+            height: 60,
             process: false,
         };
     }
 
     renderSquare(row, column) {
-        
         return <Square value={this.state.squares === null ? '' : this.state.squares[row][column]} />;
     }
 
@@ -57,9 +56,9 @@ class Board extends React.Component {
             headers: { 'Accept': 'application/json' }
         })
             .then((response) => response.json().then(data => {
+                debugger;
                 this.setState({ squares: data.cells });
                 this.setState({ id: data.gameId });
-                this.fetchData();
             }));
     }
 
@@ -77,13 +76,12 @@ class Board extends React.Component {
         }).then((response) => response.json().then(data => {
             this.setState({ squares: data.cells });
             this.setState({ id: data.gameId });
-            this.fetchData();
         }));
     }
 
     componentDidMount() {
         this.startNewGame();
-        this.fetchData();
+        setTimeout(100, ()=>{this.fetchData()});
     }
 
     render() {
