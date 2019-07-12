@@ -69,8 +69,8 @@ class Board extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                width: 18,
-                height: 40,
+                width: 40,
+                height: 18,
             })
         }).then((response) => response.json().then(data => {
             this.setState({ squares: data.cells });
