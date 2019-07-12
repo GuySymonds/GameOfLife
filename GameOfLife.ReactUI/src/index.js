@@ -13,27 +13,32 @@ class Square extends React.Component {
         const myStyle = this.renderThis(this.props.value) ? { backgroundColor: 'black' } : null;
 
         return (
-            <span style={myStyle} className="square" >
-
-            </span>
+            <span style={myStyle} className="square"></span>
         );
     }
+}
+
+class ToggleButton extends React.Component {
+    render() {
+        return <button onClick=''>Pause</button>
+    };
 }
 
 class Board extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            squares: [[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0], [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1], [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0]],
+            squares: null,
             id: 'e6829659-e497-461d-8313-2993b9a3d9e8'
         };
     }
 
     renderSquare(row, column) {
-        return <Square value={this.state.squares[row][column]} />;
+        
+        return <Square value={this.state.squares === null ? '' : this.state.squares[row][column]} />;
     }
 
-    renderRow(row, columns, id) {
+    renderRow(row, columns) {
         var cells = [];
         for (let index = 0; index < columns; index++) {
             cells.push(this.renderSquare(row, index));
@@ -50,8 +55,8 @@ class Board extends React.Component {
     }
 
     fetchData() {
-        fetch('https://localhost:5001/api/games/' + this.state.id + '/next', { 
-            method: 'GET', 
+        fetch('https://localhost:5001/api/games/' + this.state.id + '/next', {
+            method: 'GET',
             headers: { 'Accept': 'application/json' }
         })
             .then((response) => response.json().then(data => {
@@ -82,9 +87,6 @@ class Board extends React.Component {
     componentDidMount() {
         this.startNewGame();
         this.fetchData();
-        // setInterval(()=>
-        //     {fetch('https://localhost:5001/api/games/e6829659-e497-461d-8313-2993b9a3d9e8/next', {method: 'GET', headers: {'Accept' : 'application/json'}})
-        //         .then((response) => response.json().then(data => this.setState( {squares : data.cells})))}, 100);
     }
 
     render() {
@@ -97,6 +99,7 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+
     render() {
         return (
             <div className="game">
@@ -104,8 +107,7 @@ class Game extends React.Component {
                     <Board />
                 </div>
                 <div className="game-info">
-                    <div>{/* status */}</div>
-                    <ol>{/* TODO */}</ol>
+                    <ToggleButton onClick={() => { this.handleClick() }} />
                 </div>
             </div>
         );
@@ -113,7 +115,6 @@ class Game extends React.Component {
 }
 
 // ========================================
-
 ReactDOM.render(
     <Game />,
     document.getElementById('root')
