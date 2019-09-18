@@ -9,7 +9,7 @@ namespace GameOfLife.ConApp
 {
     public class Game
     {
-        private RestClient _client = new RestClient("https://localhost:5001");
+        private readonly RestClient _client = new RestClient("https://localhost:5003");
 
         internal GameModel GetNewGame(NewGameModel model)
         {

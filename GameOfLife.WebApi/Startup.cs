@@ -57,7 +57,7 @@ namespace GameOfLife.Engine
             
             app.UseCors("CorsPolicy");
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseMvc();
         }
     }

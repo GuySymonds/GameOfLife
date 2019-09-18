@@ -52,7 +52,7 @@ namespace GameOfLife.Engine.Services
 
         public GameModel NewGame(NewGameModel model)
         {
-            var game = new GameModel(_gameEngine.GenerateSeed(model.Height, model.Width));
+            var game = new GameModel(_gameEngine.GenerateSeed(model.Width, model.Height));
             DataStore.Add(game.GameId, game);
             return game;
         }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GameOfLife.Engine
 {
@@ -13,9 +11,10 @@ namespace GameOfLife.Engine
         public byte[,] GenerateSeed(int rows, int columns)
         {
             var seed = new byte[rows, columns];
-            for (var column = 0; column < columns; column++)
+
+            for (var row = 0; row < rows; row++)
             {
-                for (var row = 0; row < rows; row++)
+                for (var column = 0; column < columns; column++)
                 {
                     seed[row, column] = _rand.Value.NextDouble() < 0.2 ? (byte)1 : (byte)0;
                 }
@@ -31,9 +30,9 @@ namespace GameOfLife.Engine
 
             var future = new byte[rows, columns];
 
-            for (var column = 0; column < columns; column++)
+            for (var row = 0; row < rows; row++)
             {
-                for (var row = 0; row < rows; row++)
+                for (var column = 0; column < columns; column++)
                 {
                     future[row, column] = ApplyLaw(game, row, column);
                 }

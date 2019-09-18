@@ -28,10 +28,10 @@ namespace GameOfLife.ConApp
 
             while (changing)
             {
-                Console.Clear();
                 cycles++;
                 current = game.GetNextGameState(current.GameId);
-                if(current.Cells.IsEqual(last))
+                Console.Clear();
+                if (current.Cells.IsEqual(last))
                 {
                     changing = false;
                     Console.WriteLine("This is the same as the last iteration");
