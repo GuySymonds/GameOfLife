@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GameOfLife.ConApp
 {
@@ -10,7 +11,8 @@ namespace GameOfLife.ConApp
 
         private static int _width = Console.WindowWidth;
         private static int _height = Console.WindowHeight;
-        static void Main(string[] args)
+
+        static async Task Main()
         {
             _width = 200;
             _height = 40;
@@ -18,8 +20,8 @@ namespace GameOfLife.ConApp
             var sleeper = 100;
             Console.WriteLine("Game Of Life!");
             var changing = true;
-            var game = new Game();
-            var current = game.GetNewGame(new Common.Models.NewGameModel(_width, _height));
+            IGame game = new Game();
+            var current = await game.GetNewGameAsync(new Common.Models.NewGameModel(_width, _height));
             
             Console.Write(current.Cells.ToString('#'));
             int cycles = 0;
@@ -29,7 +31,7 @@ namespace GameOfLife.ConApp
             while (changing)
             {
                 cycles++;
-                current = game.GetNextGameState(current.GameId);
+                current = await game.GetNextGameStateAsync(current.GameId);
                 Console.Clear();
                 if (current.Cells.IsEqual(last))
                 {
