@@ -8,7 +8,7 @@ namespace GameOfLife.ConApp
 {
     public class RestGame : IGame
     {
-        private readonly RestClient _client = new RestClient("https://localhost:5003");
+        private readonly RestClient _client = new RestClient("https://localhost:7168");
 
         public GameModel GetNewGame(NewGameModel model)
         {
