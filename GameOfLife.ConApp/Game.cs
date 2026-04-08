@@ -1,62 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using GameOfLife.Common.Models;
 using Newtonsoft.Json;
 
-namespace GameOfLife.ConApp
+namespace GameOfLife.ConApp;
+
+public class Game : IGame
 {
-    public class Game : IGame
+    private const string _uri = "https://localhost:7168";
+    private readonly HttpClient _client = new HttpClient();
+
+    public GameModel GetGameState(Guid id) => GetGameStateAsync(id).Result;
+
+    public async Task<GameModel> GetGameStateAsync(Guid id)
     {
-        private const string _uri = "https://localhost:7168";
-        private readonly HttpClient _client = new HttpClient();
+        var response = await _client.GetAsync(_uri + $"/api/game/{id}");
 
-        public GameModel GetGameState(Guid id)
-        {
-            return GetGameStateAsync(id).Result;
-        }
+        if (response.IsSuccessStatusCode)
+            return JsonConvert.DeserializeObject<GameModel>(await response.Content.ReadAsStringAsync())!;
+        else
+            throw new Exception(response.StatusCode.ToString());
+    }
 
-        public async Task<GameModel> GetGameStateAsync(Guid id)
-        {
-            var response = await _client.GetAsync(_uri + $"/api/game/{id}");
+    public GameModel GetNewGame(NewGameModel model) => GetNewGameAsync(model).Result;
 
-            if (response.IsSuccessStatusCode)
-                return JsonConvert.DeserializeObject<GameModel>(await response.Content.ReadAsStringAsync());
-            else
-                throw new Exception(response.StatusCode.ToString());
-        }
+    public async Task<GameModel> GetNewGameAsync(NewGameModel model)
+    {
+        var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync(_uri + "/api/game", content);
 
-        public GameModel GetNewGame(NewGameModel model)
-        {
-            return GetNewGameAsync(model).Result;
-        }
+        if (response.IsSuccessStatusCode)
+            return JsonConvert.DeserializeObject<GameModel>(await response.Content.ReadAsStringAsync())!;
+        else
+            throw new Exception(response.StatusCode.ToString());
+    }
 
-        public async Task<GameModel> GetNewGameAsync(NewGameModel model)
-        {
-            var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync(_uri + "/api/game", content);
+    public GameModel GetNextGameState(Guid id) => GetNextGameStateAsync(id).Result;
 
-            if (response.IsSuccessStatusCode)
-                return JsonConvert.DeserializeObject<GameModel>(await response.Content.ReadAsStringAsync());
-            else
-                throw new Exception(response.StatusCode.ToString());
-        }
+    public async Task<GameModel> GetNextGameStateAsync(Guid id)
+    {
+        var response = await _client.GetAsync(_uri + $"/api/game/{id}/next");
 
-        public GameModel GetNextGameState(Guid id)
-        {
-            return GetNextGameStateAsync(id).Result;
-        }
-
-        public async Task<GameModel> GetNextGameStateAsync(Guid id)
-        {
-            var response = await _client.GetAsync(_uri + $"/api/game/{id}/next");
-            
-            if (response.IsSuccessStatusCode)
-                return JsonConvert.DeserializeObject<GameModel>(await response.Content.ReadAsStringAsync());
-            else
-                throw new Exception(response.StatusCode.ToString());
-        }
+        if (response.IsSuccessStatusCode)
+            return JsonConvert.DeserializeObject<GameModel>(await response.Content.ReadAsStringAsync())!;
+        else
+            throw new Exception(response.StatusCode.ToString());
     }
 }
