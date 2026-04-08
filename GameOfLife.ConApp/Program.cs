@@ -14,41 +14,40 @@ var sleepMs = 100;
 IGame game = new Game();
 var current = await game.GetNewGameAsync(new GameOfLife.Common.Models.NewGameModel(width, height));
 
-var changing = true;
 int cycles = 0;
 byte[][]? last = null;
 byte[][]? secondLast = null;
+string stopReason = string.Empty;
 
 var liveColor = Color.Green;
 
-while (changing)
-{
-    cycles++;
-    current = await game.GetNextGameStateAsync(current.GameId);
-
-    AnsiConsole.Clear();
-
-    var panel = BuildGamePanel(current.Cells, cycles, liveColor);
-    AnsiConsole.Write(panel);
-
-    if (current.Cells.IsEqual(last))
+await AnsiConsole.Live(BuildGamePanel(current.Cells, cycles, liveColor))
+    .AutoClear(false)
+    .Overflow(VerticalOverflow.Ellipsis)
+    .StartAsync(async ctx =>
     {
-        changing = false;
-        AnsiConsole.MarkupLine("[yellow]Steady state reached — this generation matches the last.[/]");
-    }
-    else if (current.Cells.IsEqual(secondLast))
-    {
-        changing = false;
-        AnsiConsole.MarkupLine("[yellow]Oscillator detected — this generation matches two cycles ago.[/]");
-    }
-    else
-    {
-        Thread.Sleep(sleepMs);
-        secondLast = last;
-        last = current.Cells;
-    }
-}
+        while (string.IsNullOrEmpty(stopReason))
+        {
+            cycles++;
+            current = await game.GetNextGameStateAsync(current.GameId);
 
+            ctx.UpdateTarget(BuildGamePanel(current.Cells, cycles, liveColor));
+            ctx.Refresh();
+
+            if (current.Cells.IsEqual(last))
+                stopReason = "[yellow]Steady state reached — this generation matches the last.[/]";
+            else if (current.Cells.IsEqual(secondLast))
+                stopReason = "[yellow]Oscillator detected — this generation matches two cycles ago.[/]";
+            else
+            {
+                Thread.Sleep(sleepMs);
+                secondLast = last;
+                last = current.Cells;
+            }
+        }
+    });
+
+AnsiConsole.MarkupLine(stopReason);
 AnsiConsole.MarkupLine("[bold green]Simulation complete![/]");
 AnsiConsole.MarkupLine($"[grey]Total cycles: {cycles}[/]");
 Console.Read();
