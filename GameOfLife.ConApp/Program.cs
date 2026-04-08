@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using GameOfLife.ConApp;
@@ -12,24 +12,14 @@ var height = 30;
 var sleepMs = 100;
 
 IGame game = new Game();
-
-GameOfLife.Common.Models.GameModel current;
-await AnsiConsole.Status()
-    .Spinner(Spinner.Known.Dots)
-    .StartAsync("Starting new game...", async ctx =>
-    {
-        current = await game.GetNewGameAsync(new GameOfLife.Common.Models.NewGameModel(width, height));
-    });
-
-current = await game.GetNewGameAsync(new GameOfLife.Common.Models.NewGameModel(width, height));
+var current = await game.GetNewGameAsync(new GameOfLife.Common.Models.NewGameModel(width, height));
 
 var changing = true;
 int cycles = 0;
-byte[,]? last = null;
-byte[,]? secondLast = null;
+byte[][]? last = null;
+byte[][]? secondLast = null;
 
 var liveColor = Color.Green;
-var deadChar = ' ';
 
 while (changing)
 {
@@ -63,10 +53,10 @@ AnsiConsole.MarkupLine("[bold green]Simulation complete![/]");
 AnsiConsole.MarkupLine($"[grey]Total cycles: {cycles}[/]");
 Console.Read();
 
-static Panel BuildGamePanel(byte[,] cells, int cycle, Color liveColor)
+static Panel BuildGamePanel(byte[][] cells, int cycle, Color liveColor)
 {
-    var rows = cells.GetLength(0);
-    var columns = cells.GetLength(1);
+    var rows = cells.Length;
+    var columns = cells[0].Length;
     var totalLife = cells.TotalLife();
     var liveChar = cycle % 2 == 0 ? '█' : '▓';
 
@@ -85,15 +75,15 @@ static Panel BuildGamePanel(byte[,] cells, int cycle, Color liveColor)
         .Padding(0, 0);
 }
 
-static string BuildRow(byte[,] cells, int rows, int col, char liveChar, Color liveColor)
+static string BuildRow(byte[][] cells, int rows, int col, char liveChar, Color liveColor)
 {
     var sb = new System.Text.StringBuilder();
     for (var row = 0; row < rows; row++)
     {
-        if (cells[row, col] == 1)
+        if (cells[row][col] == 1)
             sb.Append($"[{liveColor}]{liveChar}[/]");
         else
-            sb.Append(deadChar);
+            sb.Append(' ');
     }
     return sb.ToString();
 }

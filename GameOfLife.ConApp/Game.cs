@@ -1,9 +1,8 @@
 using System;
 using System.Net.Http;
-using System.Text;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using GameOfLife.Common.Models;
-using Newtonsoft.Json;
 
 namespace GameOfLife.ConApp;
 
@@ -16,36 +15,25 @@ public class Game : IGame
 
     public async Task<GameModel> GetGameStateAsync(Guid id)
     {
-        var response = await _client.GetAsync(_uri + $"/api/game/{id}");
-
-        if (response.IsSuccessStatusCode)
-            return JsonConvert.DeserializeObject<GameModel>(await response.Content.ReadAsStringAsync())!;
-        else
-            throw new Exception(response.StatusCode.ToString());
+        var result = await _client.GetFromJsonAsync<GameModel>(_uri + $"/api/game/{id}");
+        return result ?? throw new Exception($"No game found with id {id}");
     }
 
     public GameModel GetNewGame(NewGameModel model) => GetNewGameAsync(model).Result;
 
     public async Task<GameModel> GetNewGameAsync(NewGameModel model)
     {
-        var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync(_uri + "/api/game", content);
-
-        if (response.IsSuccessStatusCode)
-            return JsonConvert.DeserializeObject<GameModel>(await response.Content.ReadAsStringAsync())!;
-        else
-            throw new Exception(response.StatusCode.ToString());
+        var response = await _client.PostAsJsonAsync(_uri + "/api/game", model);
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<GameModel>();
+        return result ?? throw new Exception("Failed to create new game");
     }
 
     public GameModel GetNextGameState(Guid id) => GetNextGameStateAsync(id).Result;
 
     public async Task<GameModel> GetNextGameStateAsync(Guid id)
     {
-        var response = await _client.GetAsync(_uri + $"/api/game/{id}/next");
-
-        if (response.IsSuccessStatusCode)
-            return JsonConvert.DeserializeObject<GameModel>(await response.Content.ReadAsStringAsync())!;
-        else
-            throw new Exception(response.StatusCode.ToString());
+        var result = await _client.GetFromJsonAsync<GameModel>(_uri + $"/api/game/{id}/next");
+        return result ?? throw new Exception($"No game found with id {id}");
     }
 }
