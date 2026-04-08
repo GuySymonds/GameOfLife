@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="GameOfLife.Api/GameOfLife.Api.csproj" />
+  <Project Path="GameOfLife.Common/GameOfLife.Common.csproj" />
+  <Project Path="GameOfLife.ConApp/GameOfLife.ConApp.csproj" />
+  <Project Path="GameOfLife.Engine/GameOfLife.Engine.csproj" />
+</Solution>
