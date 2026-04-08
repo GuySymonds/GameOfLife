@@ -22,7 +22,7 @@ Conway's Game of Life implemented as a .NET 10 solution with three runnable comp
 - Enable **implicit usings** (`<ImplicitUsings>enable</ImplicitUsings>`) in all projects.
 - Prefer **expression-bodied members** for simple single-expression methods.
 - Use `TryGetValue` instead of `ContainsKey` + indexer when accessing dictionaries.
-- Keep the `Extention` class (note the intentional spelling) in `GameOfLife.ConApp` for `byte[][]` helper methods (`IsEqual`, `TotalLife`).
+- Keep the `Extention` class (the class name in the codebase uses this spelling) in `GameOfLife.ConApp` for `byte[][]` helper methods (`IsEqual`, `TotalLife`).
 
 ## Architecture Rules
 - **GameOfLife.Engine** has zero dependencies — it only contains pure computation.
@@ -33,10 +33,10 @@ Conway's Game of Life implemented as a .NET 10 solution with three runnable comp
 
 ## Game Rules (Conway's Game of Life)
 The engine (`GameEngine.ApplyLaw`) implements the four standard rules:
-1. A live cell with fewer than 2 live neighbours dies (underpopulation).
-2. A live cell with 2 or 3 live neighbours survives.
-3. A live cell with more than 3 live neighbours dies (overpopulation).
-4. A dead cell with exactly 3 live neighbours becomes alive (reproduction).
+1. A live cell with fewer than 2 live neighbors dies (underpopulation).
+2. A live cell with 2 or 3 live neighbors survives.
+3. A live cell with more than 3 live neighbors dies (overpopulation).
+4. A dead cell with exactly 3 live neighbors becomes alive (reproduction).
 
 The grid wraps at the edges (toroidal topology).
 

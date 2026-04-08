@@ -63,9 +63,10 @@ static Panel BuildGamePanel(byte[][] cells, int cycle, Color liveColor)
     var grid = new Table().Border(TableBorder.None).HideHeaders();
     grid.AddColumn(new TableColumn("board").NoWrap());
 
-    for (var col = 0; col < columns; col++)
+    // Each column index maps to one visual row in the output
+    for (var y = 0; y < columns; y++)
     {
-        var line = new Markup(BuildRow(cells, rows, col, liveChar, liveColor));
+        var line = new Markup(BuildRow(cells, rows, y, liveChar, liveColor));
         grid.AddRow(line);
     }
 
@@ -75,12 +76,12 @@ static Panel BuildGamePanel(byte[][] cells, int cycle, Color liveColor)
         .Padding(0, 0);
 }
 
-static string BuildRow(byte[][] cells, int rows, int col, char liveChar, Color liveColor)
+static string BuildRow(byte[][] cells, int rows, int y, char liveChar, Color liveColor)
 {
     var sb = new System.Text.StringBuilder();
-    for (var row = 0; row < rows; row++)
+    for (var x = 0; x < rows; x++)
     {
-        if (cells[row][col] == 1)
+        if (cells[x][y] == 1)
             sb.Append($"[{liveColor}]{liveChar}[/]");
         else
             sb.Append(' ');
