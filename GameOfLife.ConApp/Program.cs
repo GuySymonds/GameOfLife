@@ -1,77 +1,89 @@
-﻿using System;
-using System.Text;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using GameOfLife.ConApp;
+using Spectre.Console;
 
-namespace GameOfLife.ConApp
-{
-    class Program
+AnsiConsole.Write(new FigletText("Game of Life").Centered().Color(Color.Green));
+AnsiConsole.WriteLine();
+
+var width = 80;
+var height = 30;
+var sleepMs = 100;
+
+IGame game = new Game();
+var current = await game.GetNewGameAsync(new GameOfLife.Common.Models.NewGameModel(width, height));
+
+int cycles = 0;
+byte[][]? last = null;
+byte[][]? secondLast = null;
+string stopReason = string.Empty;
+
+var liveColor = Color.Green;
+
+await AnsiConsole.Live(BuildGamePanel(current.Cells, cycles, liveColor))
+    .AutoClear(false)
+    .Overflow(VerticalOverflow.Ellipsis)
+    .StartAsync(async ctx =>
     {
-        static Guid id = Guid.Parse("e6829659-e497-461d-8313-2993b9a3d9e8");
-
-        private static int _width = Console.WindowWidth;
-        private static int _height = Console.WindowHeight;
-
-        static async Task Main()
+        while (string.IsNullOrEmpty(stopReason))
         {
-            _width = 200;
-            _height = 40;
-            Thread.Sleep(1000);
-            var sleeper = 100;
-            Console.WriteLine("Game Of Life!");
-            var changing = true;
-            IGame game = new Game();
-            var current = await game.GetNewGameAsync(new Common.Models.NewGameModel(_width, _height));
-            
-            Console.Write(current.Cells.ToString('#'));
-            int cycles = 0;
-            byte[,] last = null;
-            byte[,] secondLast = null;
+            cycles++;
+            current = await game.GetNextGameStateAsync(current.GameId);
 
-            while (changing)
+            ctx.UpdateTarget(BuildGamePanel(current.Cells, cycles, liveColor));
+            ctx.Refresh();
+
+            if (current.Cells.IsEqual(last))
+                stopReason = "[yellow]Steady state reached — this generation matches the last.[/]";
+            else if (current.Cells.IsEqual(secondLast))
+                stopReason = "[yellow]Oscillator detected — this generation matches two cycles ago.[/]";
+            else
             {
-                cycles++;
-                current = await game.GetNextGameStateAsync(current.GameId);
-                Console.Clear();
-                if (current.Cells.IsEqual(last))
-                {
-                    changing = false;
-                    Console.WriteLine("This is the same as the last iteration");
-                }
-                else if (current.Cells.IsEqual(secondLast))
-                {
-                    changing = false;
-                    Console.WriteLine("This is the same as it was two iterations ago");
-                }
-                else
-                {
-                    if(cycles % 2 == 0)
-                        Console.Write(current.Cells.ToString('#'));
-                    else
-                        Console.Write(current.Cells.ToString('='));
-
-                    Thread.Sleep(sleeper);
-                    Console.WriteLine("Total Cycles: {0}", cycles);
-                    secondLast = last;
-                    last = current.Cells;
-                }
-                    Console.WriteLine("Galactic Life: {0}", current.Cells.TotalLife());
-
-                /*if (cycles % 9 == 0)
-                {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                } 
-                else if (cycles % 6 == 0)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                } 
-                else if (cycles % 3 == 0)
-                {
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                }*/
+                Thread.Sleep(sleepMs);
+                secondLast = last;
+                last = current.Cells;
             }
-            Console.WriteLine("Done!");
-            Console.Read();
         }
+    });
+
+AnsiConsole.MarkupLine(stopReason);
+AnsiConsole.MarkupLine("[bold green]Simulation complete![/]");
+AnsiConsole.MarkupLine($"[grey]Total cycles: {cycles}[/]");
+Console.Read();
+
+static Panel BuildGamePanel(byte[][] cells, int cycle, Color liveColor)
+{
+    var rows = cells.Length;
+    var columns = cells[0].Length;
+    var totalLife = cells.TotalLife();
+    var liveChar = cycle % 2 == 0 ? '█' : '▓';
+
+    var grid = new Table().Border(TableBorder.None).HideHeaders();
+    grid.AddColumn(new TableColumn("board").NoWrap());
+
+    // Each column index maps to one visual row in the output
+    for (var y = 0; y < columns; y++)
+    {
+        var line = new Markup(BuildRow(cells, rows, y, liveChar, liveColor));
+        grid.AddRow(line);
     }
+
+    return new Panel(grid)
+        .Header($"[bold]Cycle {cycle,4}[/]  [green]Alive: {totalLife,5}[/]")
+        .BorderStyle(Style.Parse("blue"))
+        .Padding(0, 0);
+}
+
+static string BuildRow(byte[][] cells, int rows, int y, char liveChar, Color liveColor)
+{
+    var sb = new System.Text.StringBuilder();
+    for (var x = 0; x < rows; x++)
+    {
+        if (cells[x][y] == 1)
+            sb.Append($"[{liveColor}]{liveChar}[/]");
+        else
+            sb.Append(' ');
+    }
+    return sb.ToString();
 }
