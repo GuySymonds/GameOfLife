@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import './index.css';
 
-const API_BASE = 'http://localhost:5168/api/game';
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:5168/api/game';
 
 function Square({ value }) {
   const alive = value === 1;

@@ -10,6 +10,8 @@ services:
     build:
       context: ./GameOfLife.ReactUI
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE: http://localhost:5168/api/game
     ports:
       - "5173:80"
     depends_on:
