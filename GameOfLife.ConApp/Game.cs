@@ -1,13 +1,19 @@
-using System;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
+using GameOfLife.Common.Converters;
 using GameOfLife.Common.Models;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace GameOfLife.ConApp;
 
 public class Game : IGame
 {
+    private static readonly JsonSerializerOptions options = new(JsonSerializerDefaults.Web)
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = true,
+        Converters = { new ByteArrayAsNumbersConverter() }
+    };
+
     private const string _uri = "https://localhost:7168";
     private readonly HttpClient _client = new HttpClient();
 
@@ -33,7 +39,7 @@ public class Game : IGame
 
     public async Task<GameModel> GetNextGameStateAsync(Guid id)
     {
-        var result = await _client.GetFromJsonAsync<GameModel>(_uri + $"/api/game/{id}/next");
+        var result = await _client.GetFromJsonAsync<GameModel>(_uri + $"/api/game/{id}/next", options);
         return result ?? throw new Exception($"No game found with id {id}");
     }
 }
