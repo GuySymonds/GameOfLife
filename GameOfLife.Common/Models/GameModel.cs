@@ -4,14 +4,14 @@ public class GameModel
 {
     public GameModel() { }
 
-    public GameModel(byte[][] data) : this(Guid.NewGuid(), data) { }
+    public GameModel(bool[][] data) : this(Guid.NewGuid(), data) { }
 
-    public GameModel(Guid id, byte[][] data)
+    public GameModel(Guid id, bool[][] data)
     {
         GameId = id;
         Cells = data;
     }
 
     public Guid GameId { get; set; }
-    public byte[][] Cells { get; set; } = [];
+    public bool[][] Cells { get; set; } = [];
 }

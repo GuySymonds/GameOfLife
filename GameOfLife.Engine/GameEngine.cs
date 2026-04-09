@@ -6,29 +6,29 @@ public class GameEngine
 
     public Random Rand => _rand.Value;
 
-    public byte[][] GenerateSeed(int rows, int columns)
+    public bool[][] GenerateSeed(int rows, int columns)
     {
-        var seed = new byte[rows][];
+        var seed = new bool[rows][];
         for (var row = 0; row < rows; row++)
         {
-            seed[row] = new byte[columns];
+            seed[row] = new bool[columns];
             for (var column = 0; column < columns; column++)
             {
-                seed[row][column] = _rand.Value.NextDouble() < 0.2 ? (byte)1 : (byte)0;
+                seed[row][column] = _rand.Value.NextDouble() < 0.2;
             }
         }
         return seed;
     }
 
-    public byte[][] GetNextState(byte[][] game)
+    public bool[][] GetNextState(bool[][] game)
     {
         var rows = game.Length;
         var columns = game[0].Length;
-        var future = new byte[rows][];
+        var future = new bool[rows][];
 
         for (var row = 0; row < rows; row++)
         {
-            future[row] = new byte[columns];
+            future[row] = new bool[columns];
             for (var column = 0; column < columns; column++)
             {
                 future[row][column] = ApplyLaw(game, row, column);
@@ -38,7 +38,7 @@ public class GameEngine
         return future;
     }
 
-    private static byte ApplyLaw(byte[][] present, int row, int column)
+    private static bool ApplyLaw(bool[][] present, int row, int column)
     {
         var cell = present[row][column];
         var maxRow = present.Length - 1;
@@ -49,29 +49,26 @@ public class GameEngine
         var eastColumn = column + 1 > maxColumn ? 0 : column + 1;
         var westColumn = column - 1 == -1 ? maxColumn : column - 1;
 
-        var neighbors = present[northRow][westColumn] +
-                        present[northRow][column] +
-                        present[northRow][eastColumn] +
-                        present[row][eastColumn] +
-                        present[southRow][eastColumn] +
-                        present[southRow][column] +
-                        present[southRow][westColumn] +
-                        present[row][westColumn];
+        var neighbors = (present[northRow][westColumn] ? 1 : 0) +
+                        (present[northRow][column] ? 1 : 0) +
+                        (present[northRow][eastColumn] ? 1 : 0) +
+                        (present[row][eastColumn] ? 1 : 0) +
+                        (present[southRow][eastColumn] ? 1 : 0) +
+                        (present[southRow][column] ? 1 : 0) +
+                        (present[southRow][westColumn] ? 1 : 0) +
+                        (present[row][westColumn] ? 1 : 0);
 
-        if (cell == 1 && neighbors < 2)
+        if (cell && neighbors < 2)
         {
-            //Any live cell with fewer than two live neighbors dies, as if by under population
-            cell = 0;
+            return false;
         }
-        else if (cell == 1 && neighbors > 3)
+        else if (cell && neighbors > 3)
         {
-            //Any live cell with more than three live neighbors dies, as if by overpopulation
-            cell = 0;
+            return false;
         }
-        else if (cell == 0 && neighbors == 3)
+        else if (!cell && neighbors == 3)
         {
-            //Any dead cell with exactly 3 live neighbors lives, as if by reproduction
-            cell = 1;
+            return true;
         }
 
         return cell;

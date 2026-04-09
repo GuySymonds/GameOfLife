@@ -58,4 +58,17 @@ dotnet run --project GameOfLife.Api
 
 # Run the console app (in a second terminal)
 dotnet run --project GameOfLife.ConApp
+
+## Verification
+Before creating changes that affect runtime behavior, verify both the console app and the React UI are working locally:
+
+- Start the API: `dotnet run --project GameOfLife.Api` and confirm Swagger UI loads at the configured HTTPS port.
+- Run the console app: `dotnet run --project GameOfLife.ConApp` and confirm the ASCII board renders and advances.
+- Run the React UI: `npm install` then `npm run dev` (or the project-specified start command) and confirm the browser renders the board with correct orientation (width = columns, height = rows).
+
+Add tests to the solution that cover:
+
+- `GameEngine.GenerateSeed` produces arrays with the expected rows/columns shape.
+- `GameEngine.GetNextState` applies Conway's rules correctly for simple patterns (block, blinker).
+- `GameService.NewGame` maps `NewGameModel.Width` and `Height` to the engine correctly.
 ```

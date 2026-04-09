@@ -1,90 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #020617;
+  --panel-bg: rgba(2,6,23,0.6);
+  --muted: #89a0b0;
+  --accent: #00ffba;
+  --live-color: #00ffba;
+  --text-color: #d9fff0;
+  --cell-size: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html { height: 100%; overflow: hidden; }
+
 body {
-  font: 14px "Century Gothic", Futura, sans-serif;
-  margin: 20px;
-}
-
-ol, ul {
-  padding-left: 30px;
-}
-
-.board-row {
-  display: flex;
-}
-
-.board-row:after {
-  clear: both;
-  content: "";
-  display: table;
-}
-
-.status {
-  margin-bottom: 10px;
-}
-
-.square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 12px;
-  height: 12px;
-  margin-right: -1px;
-  margin-top: -1px;
+  height: 100%;
+  margin: 0;
   padding: 0;
-  text-align: center;
-  width: 12px;
-  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--text-color);
+  transition: background-color 200ms linear, color 200ms linear;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
 }
 
-.square:focus {
-  outline: none;
-}
+#root { height: 100%; }
 
-.kbd-navigation .square:focus {
-  background: #ddd;
-}
+h1, h2, h3, h4, h5, h6 { margin: 0; }
 
-.game {
-  display: flex;
-  flex-direction: column;
-}
+.app-root { height: 100vh; display: flex; flex-direction: column; padding: 8px; overflow: hidden; }
 
-.game-info {
-  margin-left: 20px;
-}
+.app-container { max-width: 1100px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-.controls {
-  margin-bottom: 10px;
-  display: flex;
-  gap: 8px;
-}
+header { margin-bottom: 8px; flex-shrink: 0; }
 
-.controls button {
-  padding: 6px 14px;
-  font-size: 14px;
-  cursor: pointer;
-  border: 1px solid #999;
-  border-radius: 4px;
-  background: #f0f0f0;
-}
+.layout-main { display: grid; grid-template-columns: 1fr; gap: 8px; flex: 1; overflow: hidden; }
 
-.controls button:hover {
-  background: #ddd;
-}
+@media (min-width: 768px) { .layout-main { grid-template-columns: 2fr 1fr; } }
 
-.loading {
-  padding: 20px;
-  color: #666;
-}
+.loading { padding: 16px; color: var(--muted); text-align: center; }
 
-.error {
-  padding: 10px;
-  margin-bottom: 10px;
-  color: #c00;
-  background: #fff0f0;
-  border: 1px solid #fcc;
-  border-radius: 4px;
-}
+.error { padding: 12px; margin-bottom: 12px; color: #ff6b6b; background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); border-radius: 6px; }
 
-  
+.game-board-grid { display: grid; gap: 1px; padding: 4px; border-radius: 8px; background: rgba(2,6,23,0.3); overflow: hidden; }
+
+.theme-light .game-board-grid { background: rgba(240,244,248,0.8); }
+
+.cell { width: var(--cell-size); height: var(--cell-size); background: rgba(2,6,23,0.3); border-radius: 1px; transition: background-color 120ms linear; }
+
+.theme-light .cell { background: rgba(203,213,225,0.5); }
+
+.cell.alive { background: var(--live-color, #00ffba); box-shadow: 0 0 8px var(--live-color, #00ffba); }
+
+.theme-dark { --bg: #020617; --panel-bg: rgba(2,6,23,0.6); --muted: #89a0b0; --accent: #00ffba; --live-color: #00ffba; --text-color: #d9fff0; color-scheme: dark; }
+
+.theme-light { --bg: #f8fafc; --panel-bg: rgba(255,255,255,0.85); --muted: #64748b; --accent: #0ea5e9; --live-color: #0f172a; --text-color: #0f172a; color-scheme: light; }
+
+input[type="range"] { accent-color: var(--accent); cursor: pointer; vertical-align: middle; }
+
+input[type="radio"] { cursor: pointer; margin-right: 4px; accent-color: var(--accent); }
+
+label { cursor: pointer; display: inline-flex; align-items: center; font-size: 12px; margin-right: 12px; }
+
+select { background: var(--panel-bg); color: var(--text-color); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 0.35rem 0.6rem; cursor: pointer; font-size: 12px; }
+
+select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,255,186,0.1); }
+
+select option { background: var(--bg); color: var(--text-color); }
+
+@media (max-width: 768px) { :root { --cell-size: 6px; } .layout-main { gap: 6px; } }
+
+@media (max-width: 480px) { :root { --cell-size: 4px; } }

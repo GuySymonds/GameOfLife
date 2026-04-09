@@ -1,17 +1,17 @@
 import { createRoot } from 'react-dom/client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import './index.css';
+import Button from './components/Button';
+import Panel from './components/Panel';
+import Toolbar from './components/Toolbar';
+import SectionHeading from './components/SectionHeading';
+import CanvasBoard from './components/CanvasBoard';
 
-const API_BASE = 'http://localhost:5168/api/game';
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:5168/api/game';
 
 function Square({ value }) {
-  const alive = value === 1;
-  return (
-    <span
-      className="square"
-      style={alive ? { backgroundColor: 'black' } : undefined}
-    />
-  );
+  const alive = !!value;
+  return <span className={`cell ${alive ? 'alive' : ''}`} />;
 }
 
 function Board() {
@@ -20,9 +20,11 @@ function Board() {
   const [running, setRunning] = useState(false);
   const [error, setError] = useState(null);
   const intervalRef = useRef(null);
+  const [renderMode, setRenderMode] = useState('canvas');
+  const [speed, setSpeed] = useState(1); // 1 = 200ms per generation, 2 = 100ms, 3 = 50ms, 0.5 = 400ms
 
-  const width = 160;
-  const height = 60;
+  const width = 200;
+  const height = 80;
 
   const startNewGame = useCallback(async () => {
     try {
@@ -67,46 +69,137 @@ function Board() {
 
   useEffect(() => {
     if (running && gameId) {
-      intervalRef.current = setInterval(() => fetchNext(gameId), 200);
+      const interval = Math.max(50, Math.floor(200 / speed));
+      intervalRef.current = setInterval(() => fetchNext(gameId), interval);
     } else {
       clearInterval(intervalRef.current);
     }
     return () => clearInterval(intervalRef.current);
-  }, [running, gameId, fetchNext]);
+  }, [running, gameId, fetchNext, speed]);
 
   const renderGrid = () => {
     if (!squares) return <div className="loading">Loading…</div>;
-    return squares.map((row, rowIdx) => (
-      <div key={rowIdx} className="board-row">
-        {row.map((cell, colIdx) => (
-          <Square key={colIdx} value={cell} />
+    const cols = squares[0]?.length ?? width;
+    return (
+      <div
+        className="game-board-grid"
+        style={{ gridTemplateColumns: `repeat(${cols}, var(--cell-size))` }}
+      >
+        {squares.flat().map((cell, idx) => (
+          <Square key={idx} value={cell} />
         ))}
       </div>
-    ));
+    );
   };
 
   return (
     <div>
       {error && <div className="error">{error}</div>}
-      <div className="controls">
-        <button onClick={() => setRunning((r) => !r)}>
+      <Toolbar>
+        <Button onClick={() => setRunning((r) => !r)}>
           {running ? 'Pause' : 'Play'}
-        </button>
-        <button onClick={() => fetchNext(gameId)}>Step</button>
-        <button onClick={startNewGame}>New Game</button>
-      </div>
-      {renderGrid()}
+        </Button>
+        <Button variant="secondary" onClick={() => fetchNext(gameId)}>
+          Step
+        </Button>
+        <Button variant="ghost" onClick={startNewGame}>
+          New Game
+        </Button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <label style={{ fontSize: '12px' }}>Speed:</label>
+          <input type="range" min="0.5" max="3" step="0.5" value={speed} onChange={(e) => setSpeed(parseFloat(e.target.value))} style={{ width: '80px' }} />
+          <span style={{ fontSize: '12px' }}>×{speed}</span>
+        </div>
+      </Toolbar>
+
+      <Panel style={{ marginTop: '12px' }}>{renderMode === 'canvas' ? <CanvasBoard squares={squares} /> : renderGrid()}</Panel>
     </div>
   );
 }
 
 function App() {
+  useEffect(() => {
+    // Initialize theme from localStorage, or detect system preference
+    const stored = localStorage.getItem('theme');
+    let prefer = stored;
+    
+    // If not stored, detect system preference
+    if (!prefer) {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      prefer = prefersDark ? 'dark' : 'light';
+    }
+    
+    document.documentElement.classList.toggle('theme-dark', prefer === 'dark');
+    document.documentElement.classList.toggle('theme-light', prefer !== 'dark');
+  }, []);
+
   return (
-    <div className="game">
-      <h1>Game of Life</h1>
-      <div className="game-board">
-        <Board />
+    <div className="app-root min-h-screen p-6">
+      <div className="app-container">
+        <header className="mb-6">
+          <h1 className="text-3xl font-semibold tracking-tight">Game of Life</h1>
+        </header>
+
+        <main className="layout-main">
+          <section className="md:col-span-2">
+            <Panel>
+              <SectionHeading>Simulation</SectionHeading>
+              <Board />
+            </Panel>
+          </section>
+
+          <aside>
+            <Panel>
+              <SectionHeading>Controls</SectionHeading>
+              <BoardControlsPlaceholder />
+              <div className="mt-3">
+                <ThemeToggle />
+              </div>
+            </Panel>
+            <Panel className="mt-4">
+              <SectionHeading>Stats</SectionHeading>
+              <div className="text-sm text-slate-600">Live cells, generation, etc.</div>
+            </Panel>
+          </aside>
+        </main>
       </div>
+    </div>
+  );
+}
+
+function BoardControlsPlaceholder() {
+  return (
+    <div className="space-y-3">
+      <div className="text-sm text-slate-600">Play / Pause / Step / New game controls are available in the simulation panel.</div>
+    </div>
+  );
+}
+
+// ThemeToggle with radio buttons
+function ThemeToggle() {
+  const [theme, setTheme] = useState(() => {
+    const stored = localStorage.getItem('theme');
+    if (stored) return stored;
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return prefersDark ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('theme-dark', theme === 'dark');
+    document.documentElement.classList.toggle('theme-light', theme !== 'dark');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <label style={{ fontSize: '12px' }}>
+        <input type="radio" name="theme" value="light" checked={theme === 'light'} onChange={e => setTheme(e.target.value)} />
+        Light
+      </label>
+      <label style={{ fontSize: '12px' }}>
+        <input type="radio" name="theme" value="dark" checked={theme === 'dark'} onChange={e => setTheme(e.target.value)} />
+        Dark
+      </label>
     </div>
   );
 }

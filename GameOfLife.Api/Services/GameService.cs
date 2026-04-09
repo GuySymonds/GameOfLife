@@ -46,7 +46,9 @@ public class GameService : IGameService
 
     public GameModel NewGame(NewGameModel model)
     {
-        var game = new GameModel(_gameEngine.GenerateSeed(model.Width, model.Height));
+        // Width represents number of columns, Height represents number of rows in the UI and callers.
+        // The engine expects (rows, columns) so pass Height first, then Width to preserve orientation.
+        var game = new GameModel(_gameEngine.GenerateSeed(model.Height, model.Width));
         DataStore.Add(game.GameId, game);
         return game;
     }
