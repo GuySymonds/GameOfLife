@@ -112,16 +112,23 @@ function Board() {
         </div>
       </Toolbar>
 
-      <Panel className="mt-4">{renderMode === 'canvas' ? <CanvasBoard squares={squares} /> : renderGrid()}</Panel>
+      <Panel style={{ marginTop: '12px' }}>{renderMode === 'canvas' ? <CanvasBoard squares={squares} /> : renderGrid()}</Panel>
     </div>
   );
 }
 
 function App() {
   useEffect(() => {
-    // Initialize theme from localStorage, default to dark
+    // Initialize theme from localStorage, or detect system preference
     const stored = localStorage.getItem('theme');
-    const prefer = stored ?? 'dark';
+    let prefer = stored;
+    
+    // If not stored, detect system preference
+    if (!prefer) {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      prefer = prefersDark ? 'dark' : 'light';
+    }
+    
     document.documentElement.classList.toggle('theme-dark', prefer === 'dark');
     document.documentElement.classList.toggle('theme-light', prefer !== 'dark');
   }, []);
@@ -168,21 +175,31 @@ function BoardControlsPlaceholder() {
   );
 }
 
-// Small ThemeToggle control
+// ThemeToggle with radio buttons
 function ThemeToggle() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') ?? 'dark');
+  const [theme, setTheme] = useState(() => {
+    const stored = localStorage.getItem('theme');
+    if (stored) return stored;
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return prefersDark ? 'dark' : 'light';
+  });
+
   useEffect(() => {
     document.documentElement.classList.toggle('theme-dark', theme === 'dark');
     document.documentElement.classList.toggle('theme-light', theme !== 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
+
   return (
-    <div className="flex items-center gap-2">
-      <label className="text-sm text-slate-500">Theme</label>
-      <select value={theme} onChange={e => setTheme(e.target.value)} className="text-sm border rounded px-2 py-1">
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-      </select>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <label style={{ fontSize: '12px' }}>
+        <input type="radio" name="theme" value="light" checked={theme === 'light'} onChange={e => setTheme(e.target.value)} />
+        Light
+      </label>
+      <label style={{ fontSize: '12px' }}>
+        <input type="radio" name="theme" value="dark" checked={theme === 'dark'} onChange={e => setTheme(e.target.value)} />
+        Dark
+      </label>
     </div>
   );
 }
