@@ -1,0 +1,16 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: GameOfLife.Api/Dockerfile
+    ports:
+      - "5168:5168"
+
+  react:
+    build:
+      context: ./GameOfLife.ReactUI
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
