@@ -1,12 +1,9 @@
 using GameOfLife.Api.Services;
-using GameOfLife.Common.Converters;
 using GameOfLife.Engine;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-        options.JsonSerializerOptions.Converters.Add(new ByteArrayAsNumbersConverter()));
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

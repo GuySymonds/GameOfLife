@@ -5,7 +5,7 @@ import './index.css';
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:5168/api/game';
 
 function Square({ value }) {
-  const alive = value === 1;
+  const alive = !!value;
   return (
     <span
       className="square"
@@ -21,8 +21,8 @@ function Board() {
   const [error, setError] = useState(null);
   const intervalRef = useRef(null);
 
-  const width = 160;
-  const height = 60;
+  const width = 200;
+  const height = 80;
 
   const startNewGame = useCallback(async () => {
     try {

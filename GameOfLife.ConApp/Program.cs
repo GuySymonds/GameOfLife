@@ -12,8 +12,8 @@ IGame game = new Game();
 var current = await game.GetNewGameAsync(new GameOfLife.Common.Models.NewGameModel(width, height));
 
 int cycles = 0;
-byte[][]? last = null;
-byte[][]? secondLast = null;
+bool[][]? last = null;
+bool[][]? secondLast = null;
 string stopReason = string.Empty;
 
 var liveColor = Color.Green;
@@ -49,7 +49,7 @@ AnsiConsole.MarkupLine("[bold green]Simulation complete![/]");
 AnsiConsole.MarkupLine($"[grey]Total cycles: {cycles}[/]");
 Console.Read();
 
-static Panel BuildGamePanel(byte[][] cells, int cycle, Color liveColor)
+static Panel BuildGamePanel(bool[][] cells, int cycle, Color liveColor)
 {
     var rows = cells.Length;
     var columns = cells[0].Length;
@@ -59,10 +59,10 @@ static Panel BuildGamePanel(byte[][] cells, int cycle, Color liveColor)
     var grid = new Table().Border(TableBorder.None).HideHeaders();
     grid.AddColumn(new TableColumn("board").NoWrap());
 
-    // Each column index maps to one visual row in the output
-    for (var y = 0; y < columns; y++)
+    // Each row maps to one visual row in the output
+    for (var r = 0; r < rows; r++)
     {
-        var line = new Markup(BuildRow(cells, rows, y, liveChar, liveColor));
+        var line = new Markup(BuildRow(cells[r], columns, liveChar, liveColor));
         grid.AddRow(line);
     }
 
@@ -72,12 +72,12 @@ static Panel BuildGamePanel(byte[][] cells, int cycle, Color liveColor)
         .Padding(0, 0);
 }
 
-static string BuildRow(byte[][] cells, int rows, int y, char liveChar, Color liveColor)
+static string BuildRow(bool[] row, int columns, char liveChar, Color liveColor)
 {
     var sb = new System.Text.StringBuilder();
-    for (var x = 0; x < rows; x++)
+    for (var x = 0; x < columns; x++)
     {
-        if (cells[x][y] == 1)
+        if (row[x])
             sb.Append($"[{liveColor}]{liveChar}[/]");
         else
             sb.Append(' ');
