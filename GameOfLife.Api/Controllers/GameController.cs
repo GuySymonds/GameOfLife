@@ -80,8 +80,15 @@ namespace GameOfLife.Api.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetCurrentState(Guid id)
         {
-            var game = _gameService.CurrentState(id);
-            return Ok(game);
+            try
+            {
+                var game = _gameService.CurrentState(id);
+                return Ok(game);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"No game found with id '{id}'.");
+            }
         }
     }
 }
