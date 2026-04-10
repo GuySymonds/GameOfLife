@@ -9,26 +9,56 @@ import CanvasBoard from './components/CanvasBoard';
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:5168/api/game';
 
+function getViewportGameSize() {
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const isLandscape = viewportWidth >= viewportHeight;
+
+  const availableWidth = Math.max(240, viewportWidth - (viewportWidth >= 768 ? 420 : 32));
+  const availableHeight = Math.max(180, viewportHeight - 220);
+
+  const widthUsage = isLandscape ? 0.9 : 0.65;
+  const heightUsage = isLandscape ? 0.65 : 0.9;
+
+  const baseCellSize = viewportWidth >= 768 ? 8 : 6;
+
+  let width = Math.max(20, Math.floor((availableWidth * widthUsage) / baseCellSize));
+  let height = Math.max(20, Math.floor((availableHeight * heightUsage) / baseCellSize));
+
+  if (isLandscape && width <= height)
+    width = height + 1;
+
+  if (!isLandscape && height <= width)
+    height = width + 1;
+
+  return { width, height };
+}
+
+function countAlive(cells) {
+  if (!cells) return 0;
+  return cells.reduce((total, row) => total + row.reduce((rowTotal, cell) => rowTotal + (cell ? 1 : 0), 0), 0);
+}
+
 function Square({ value }) {
   const alive = !!value;
   return <span className={`cell ${alive ? 'alive' : ''}`} />;
 }
 
-function Board() {
+function Board({ onStatsChange }) {
   const [squares, setSquares] = useState(null);
   const [gameId, setGameId] = useState(null);
   const [running, setRunning] = useState(false);
   const [error, setError] = useState(null);
   const intervalRef = useRef(null);
   const [renderMode, setRenderMode] = useState('canvas');
-  const [speed, setSpeed] = useState(1); // 1 = 200ms per generation, 2 = 100ms, 3 = 50ms, 0.5 = 400ms
-
-  const width = 200;
-  const height = 80;
+  const [speed, setSpeed] = useState(1);
+  const [cycle, setCycle] = useState(0);
+  const [alive, setAlive] = useState(0);
 
   const startNewGame = useCallback(async () => {
     try {
       setError(null);
+      const { width, height } = getViewportGameSize();
       const response = await fetch(`${API_BASE}`, {
         method: 'POST',
         headers: {
@@ -39,12 +69,16 @@ function Board() {
       });
       if (!response.ok) throw new Error(`Server error: ${response.status}`);
       const data = await response.json();
+      const aliveCount = countAlive(data.cells);
       setSquares(data.cells);
       setGameId(data.gameId);
+      setCycle(0);
+      setAlive(aliveCount);
+      onStatsChange?.({ cycle: 0, alive: aliveCount });
     } catch (err) {
       setError(`Failed to start game: ${err.message}`);
     }
-  }, [width, height]);
+  }, [onStatsChange]);
 
   const fetchNext = useCallback(async (id) => {
     if (!id) return;
@@ -55,13 +89,20 @@ function Board() {
       });
       if (!response.ok) throw new Error(`Server error: ${response.status}`);
       const data = await response.json();
+      const aliveCount = countAlive(data.cells);
       setSquares(data.cells);
       setGameId(data.gameId);
+      setAlive(aliveCount);
+      setCycle((previousCycle) => {
+        const nextCycle = previousCycle + 1;
+        onStatsChange?.({ cycle: nextCycle, alive: aliveCount });
+        return nextCycle;
+      });
     } catch (err) {
       setRunning(false);
       setError(`Failed to fetch next generation: ${err.message}`);
     }
-  }, []);
+  }, [onStatsChange]);
 
   useEffect(() => {
     startNewGame();
@@ -79,7 +120,7 @@ function Board() {
 
   const renderGrid = () => {
     if (!squares) return <div className="loading">Loading…</div>;
-    const cols = squares[0]?.length ?? width;
+    const cols = squares[0]?.length ?? getViewportGameSize().width;
     return (
       <div
         className="game-board-grid"
@@ -112,23 +153,27 @@ function Board() {
         </div>
       </Toolbar>
 
+      <div className="text-sm text-slate-600" style={{ marginTop: '8px' }}>
+        Cycle: {cycle} • Alive: {alive}
+      </div>
+
       <Panel style={{ marginTop: '12px' }}>{renderMode === 'canvas' ? <CanvasBoard squares={squares} /> : renderGrid()}</Panel>
     </div>
   );
 }
 
 function App() {
+  const [stats, setStats] = useState({ cycle: 0, alive: 0 });
+
   useEffect(() => {
-    // Initialize theme from localStorage, or detect system preference
     const stored = localStorage.getItem('theme');
     let prefer = stored;
-    
-    // If not stored, detect system preference
+
     if (!prefer) {
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       prefer = prefersDark ? 'dark' : 'light';
     }
-    
+
     document.documentElement.classList.toggle('theme-dark', prefer === 'dark');
     document.documentElement.classList.toggle('theme-light', prefer !== 'dark');
   }, []);
@@ -144,7 +189,7 @@ function App() {
           <section className="md:col-span-2">
             <Panel>
               <SectionHeading>Simulation</SectionHeading>
-              <Board />
+              <Board onStatsChange={setStats} />
             </Panel>
           </section>
 
@@ -158,7 +203,8 @@ function App() {
             </Panel>
             <Panel className="mt-4">
               <SectionHeading>Stats</SectionHeading>
-              <div className="text-sm text-slate-600">Live cells, generation, etc.</div>
+              <div className="text-sm text-slate-600">Cycle: {stats.cycle}</div>
+              <div className="text-sm text-slate-600">Alive: {stats.alive}</div>
             </Panel>
           </aside>
         </main>
@@ -175,7 +221,6 @@ function BoardControlsPlaceholder() {
   );
 }
 
-// ThemeToggle with radio buttons
 function ThemeToggle() {
   const [theme, setTheme] = useState(() => {
     const stored = localStorage.getItem('theme');

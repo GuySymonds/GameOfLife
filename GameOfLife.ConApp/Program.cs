@@ -4,8 +4,7 @@ using Spectre.Console;
 AnsiConsole.Write(new FigletText("Game of Life").Centered().Color(Color.Green));
 AnsiConsole.WriteLine();
 
-var width = 80;
-var height = 30;
+var (width, height) = GetBoardSize();
 var sleepMs = 100;
 
 IGame game = new Game();
@@ -48,6 +47,27 @@ AnsiConsole.MarkupLine(stopReason);
 AnsiConsole.MarkupLine("[bold green]Simulation complete![/]");
 AnsiConsole.MarkupLine($"[grey]Total cycles: {cycles}[/]");
 Console.Read();
+
+static (int Width, int Height) GetBoardSize()
+{
+    var availableWidth = Math.Max(20, Console.WindowWidth);
+    var availableHeight = Math.Max(12, Console.WindowHeight);
+
+    var isLandscape = availableWidth >= availableHeight;
+    var widthUsage = isLandscape ? 0.9 : 0.65;
+    var heightUsage = isLandscape ? 0.65 : 0.9;
+
+    var width = Math.Max(10, (int)(availableWidth * widthUsage));
+    var height = Math.Max(10, (int)(availableHeight * heightUsage));
+
+    if (isLandscape && width <= height)
+        width = height + 1;
+
+    if (!isLandscape && height <= width)
+        height = width + 1;
+
+    return (width, height);
+}
 
 static Panel BuildGamePanel(bool[][] cells, int cycle, Color liveColor)
 {
