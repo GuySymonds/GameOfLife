@@ -25,7 +25,7 @@ await AnsiConsole.Live(BuildGamePanel(current.Cells, cycles, liveColor))
         while (string.IsNullOrEmpty(stopReason))
         {
             cycles++;
-            current = await game.GetNextGameStateAsync(current.GameId);
+            current = await game.GetNextGameStateAsync(current);
 
             ctx.UpdateTarget(BuildGamePanel(current.Cells, cycles, liveColor));
             ctx.Refresh();

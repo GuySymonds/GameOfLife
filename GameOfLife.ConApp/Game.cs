@@ -33,11 +33,13 @@ public class Game : IGame
         return result ?? throw new Exception("Failed to create new game");
     }
 
-    public GameModel GetNextGameState(Guid id) => GetNextGameStateAsync(id).Result;
+    public GameModel GetNextGameState(GameModel model) => GetNextGameStateAsync(model).Result;
 
-    public async Task<GameModel> GetNextGameStateAsync(Guid id)
+    public async Task<GameModel> GetNextGameStateAsync(GameModel model)
     {
-        var result = await _client.GetFromJsonAsync<GameModel>(_uri + $"/api/game/{id}/next", options);
-        return result ?? throw new Exception($"No game found with id {id}");
+        var response = await _client.PostAsJsonAsync(_uri + $"/api/game/{model.GameId}/next", model, options);
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<GameModel>(options);
+        return result ?? throw new Exception($"No game found with id {model.GameId}");
     }
 }
