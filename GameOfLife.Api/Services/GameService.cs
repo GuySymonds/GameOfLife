@@ -53,12 +53,10 @@ public class GameService : IGameService
         return game;
     }
 
-    public GameModel NextState(Guid id)
+    public GameModel NextState(GameModel model)
     {
-        if (!DataStore.TryGetValue(id, out var game))
-            throw new KeyNotFoundException($"Key {id} does not exist");
-
-        game.Cells = _gameEngine.GetNextState(game.Cells);
-        return game;
+        model.Cells = _gameEngine.GetNextState(model.Cells);
+        DataStore[model.GameId] = model;
+        return model;
     }
 }

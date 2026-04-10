@@ -8,8 +8,8 @@ public interface IGame
 {
     GameModel GetGameState(Guid id);
     GameModel GetNewGame(NewGameModel model);
-    GameModel GetNextGameState(Guid id);
+    GameModel GetNextGameState(GameModel model);
     Task<GameModel> GetGameStateAsync(Guid id);
     Task<GameModel> GetNewGameAsync(NewGameModel model);
-    Task<GameModel> GetNextGameStateAsync(Guid id);
+    Task<GameModel> GetNextGameStateAsync(GameModel model);
 }

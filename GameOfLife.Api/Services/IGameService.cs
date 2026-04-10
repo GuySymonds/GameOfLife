@@ -15,7 +15,7 @@ namespace GameOfLife.Api.Services;
 public interface IGameService
 {
     GameModel NewGame(NewGameModel model);
-    GameModel NextState(Guid id);
+    GameModel NextState(GameModel model);
     IEnumerable<GameModel> AllGames();
     GameModel CurrentState(Guid id);
 }

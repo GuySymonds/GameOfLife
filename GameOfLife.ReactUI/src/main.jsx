@@ -54,6 +54,7 @@ function Board({ onStatsChange }) {
   const [speed, setSpeed] = useState(1);
   const [cycle, setCycle] = useState(0);
   const [alive, setAlive] = useState(0);
+  const squaresRef = useRef(null);
 
   const startNewGame = useCallback(async () => {
     try {
@@ -71,6 +72,7 @@ function Board({ onStatsChange }) {
       const data = await response.json();
       const aliveCount = countAlive(data.cells);
       setSquares(data.cells);
+      squaresRef.current = data.cells;
       setGameId(data.gameId);
       setCycle(0);
       setAlive(aliveCount);
@@ -80,17 +82,19 @@ function Board({ onStatsChange }) {
     }
   }, [onStatsChange]);
 
-  const fetchNext = useCallback(async (id) => {
-    if (!id) return;
+  const fetchNext = useCallback(async (id, currentCells) => {
+    if (!id || !currentCells) return;
     try {
       const response = await fetch(`${API_BASE}/${id}/next`, {
-        method: 'GET',
-        headers: { Accept: 'application/json' },
+        method: 'POST',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gameId: id, cells: currentCells }),
       });
       if (!response.ok) throw new Error(`Server error: ${response.status}`);
       const data = await response.json();
       const aliveCount = countAlive(data.cells);
       setSquares(data.cells);
+      squaresRef.current = data.cells;
       setGameId(data.gameId);
       setAlive(aliveCount);
       setCycle((previousCycle) => {
@@ -111,7 +115,7 @@ function Board({ onStatsChange }) {
   useEffect(() => {
     if (running && gameId) {
       const interval = Math.max(50, Math.floor(200 / speed));
-      intervalRef.current = setInterval(() => fetchNext(gameId), interval);
+      intervalRef.current = setInterval(() => fetchNext(gameId, squaresRef.current), interval);
     } else {
       clearInterval(intervalRef.current);
     }
@@ -140,7 +144,7 @@ function Board({ onStatsChange }) {
         <Button onClick={() => setRunning((r) => !r)}>
           {running ? 'Pause' : 'Play'}
         </Button>
-        <Button variant="secondary" onClick={() => fetchNext(gameId)}>
+        <Button variant="secondary" onClick={() => fetchNext(gameId, squaresRef.current)}>
           Step
         </Button>
         <Button variant="ghost" onClick={startNewGame}>
